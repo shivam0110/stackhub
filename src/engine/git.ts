@@ -38,6 +38,7 @@ export class Git {
 
   input(input: string, ...args: string[]): Promise<string> {
     return new Promise((resolve, reject) => {
+      let inputError: Error | undefined;
       const child = execFile(
         'git',
         args,
@@ -48,11 +49,15 @@ export class Git {
         },
         (error, stdout, stderr) => {
           if (error) reject(new Error(stderr.trim() || error.message));
+          else if (inputError) reject(inputError);
           else resolve(stdout);
         },
       );
-      child.stdin?.on('error', reject);
-      child.stdin?.end(input);
+      // Wait for Git's result so a closed pipe cannot hide its diagnostic or report failure before it exits.
+      child.stdin?.on('error', (error) => {
+        inputError = error;
+      });
+      child.stdin?.end(input || undefined);
     });
   }
 
