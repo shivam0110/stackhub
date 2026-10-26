@@ -30,6 +30,23 @@ async function fixture(t: { after(fn: () => Promise<void>): void }) {
   return { dir, git, engine, commit };
 }
 
+test('restack restores an untracked checkout without moving its tip', async (t) => {
+  const { git, engine: e, commit } = await fixture(t);
+  await e.create('one', 'main');
+  await commit('one', 'one');
+  await git.run('switch', '-c', 'untracked-work');
+  const original = await git.head('untracked-work');
+  await e.checkout('main');
+  await git.run('commit', '--allow-empty', '-m', 'Advance trunk');
+  await e.checkout('untracked-work');
+  await e.execute(await e.plan('restack', 'main'));
+  assert.equal(await git.current(), 'untracked-work');
+  assert.equal(await git.head('untracked-work'), original);
+  assert.notEqual(await git.head('one'), original);
+  assert.equal((await e.state()).branches.one!.base, await git.head('main'));
+  assert.equal(await e.operation(), undefined);
+});
+
 test('milestone: three branches, amend, conflict, resume and atomic leased push', async (t) => {
   const { dir, git, engine: e, commit } = await fixture(t);
   await e.create('one', 'main');

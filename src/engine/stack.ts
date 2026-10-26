@@ -599,7 +599,7 @@ export class StackEngine {
     }
     await this.save('state.json', operation.after);
     const parent = operation.before.branches[operation.original]?.parent;
-    const destination = operation.expected[operation.original]
+    const destination = (await this.git.succeeds('show-ref', '--verify', `refs/heads/${operation.original}`))
       ? operation.original
       : parent && operation.expected[parent]
         ? parent
