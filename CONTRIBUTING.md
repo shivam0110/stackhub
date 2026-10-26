@@ -50,3 +50,5 @@ CI runs the repository checks and packaging on Ubuntu. Native editor checks rema
 Keep changes focused. Use Git commands for repository operations, keep editor APIs out of the engine, and document non-obvious contracts with JSDoc. Add regression coverage for behavior changes, especially staging, rebases and push safety. Bug reports should include reproduction steps, editor/Git versions and relevant StackHub output with private data removed.
 
 The extension uses publisher `shivam0110` and the repository URLs in `package.json`. Before publishing, verify registry access, hosted GitHub operations and supported editors, update [VALIDATION.md](VALIDATION.md), then build the release. Local packaging alone does not establish Marketplace readiness.
+
+To publish to Open VSX, open GitHub Actions → **Publish to Open VSX** → **Run workflow** on `main`. The manual workflow tests, packages and uploads using the repository secret `OVSX_PAT`. Pushes and releases do not trigger publishing. Increment the version in `package.json` and `package-lock.json` before publishing an update.
