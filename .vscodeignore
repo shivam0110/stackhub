@@ -1,0 +1,17 @@
+src/**
+test/**
+dist/test/**
+dist/src/webview/**
+.gitignore
+.github/**
+.editorconfig
+.vscode/**
+node_modules/**
+tsconfig*.json
+**/*.tsbuildinfo
+.env*
+**/.env*
+**/*.log
+logs/**
+**/*.map
+**/*.vsix

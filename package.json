@@ -1,0 +1,252 @@
+{
+  "name": "stackhub",
+  "displayName": "StackHub",
+  "description": "Simple Git stacks for VS Code and Cursor.",
+  "version": "0.8.0",
+  "publisher": "stackhub-local",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "SCM Providers"
+  ],
+  "main": "./dist/src/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "extensionDependencies": [
+    "vscode.git"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false
+    },
+    "virtualWorkspaces": false
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.json tsconfig.webview.json",
+    "watch": "tsc -b --watch tsconfig.json tsconfig.webview.json",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run format:check && node --check test/native.cjs && node --check test/run-native.cjs",
+    "test": "npm run check && npm run build && node --test dist/test/*.test.js",
+    "vscode:prepublish": "npm run build",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.95.0",
+    "@vscode/vsce": "^3.0.0",
+    "prettier": "3.9.10",
+    "typescript": "^5.7.0"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 120
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "stackhub",
+          "title": "StackHub",
+          "icon": "resources/stack.svg"
+        }
+      ]
+    },
+    "views": {
+      "stackhub": [
+        {
+          "id": "stackhub.branches",
+          "name": "Branches",
+          "type": "webview"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "StackHub",
+      "properties": {
+        "stackhub.remote": {
+          "type": "string",
+          "scope": "resource",
+          "default": "origin",
+          "description": "Remote used for fetching, publishing and GitHub PRs."
+        },
+        "stackhub.modifyBehavior": {
+          "type": "string",
+          "scope": "resource",
+          "enum": [
+            "amend",
+            "commit"
+          ],
+          "default": "amend",
+          "description": "Default action when modifying the current branch. Descendants are restacked automatically."
+        },
+        "stackhub.branchLabel": {
+          "type": "string",
+          "scope": "resource",
+          "enum": [
+            "branch",
+            "pr"
+          ],
+          "enumDescriptions": [
+            "Branch name",
+            "Pull request title, falling back to the branch name"
+          ],
+          "default": "branch",
+          "description": "Label shown in the stack graph."
+        },
+        "stackhub.defaultDraft": {
+          "type": "boolean",
+          "scope": "resource",
+          "default": true,
+          "description": "Create new pull requests as drafts when submitting. Existing pull requests keep their draft or published status."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "stackhub.initialize",
+        "title": "Initialize Repository",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.selectRepository",
+        "title": "Select Repository",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.refresh",
+        "title": "Refresh",
+        "category": "StackHub",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "stackhub.create",
+        "title": "Create Stacked Branch",
+        "category": "StackHub",
+        "icon": "$(add)"
+      },
+      {
+        "command": "stackhub.track",
+        "title": "Track Existing Branch",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.checkout",
+        "title": "Check Out Branch",
+        "category": "StackHub",
+        "icon": "$(git-branch)"
+      },
+      {
+        "command": "stackhub.up",
+        "title": "Move Up to Child",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.down",
+        "title": "Move Down to Parent",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.rename",
+        "title": "Rename Branch",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.delete",
+        "title": "Delete Branch",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.commit",
+        "title": "Commit Staged Changes",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.amend",
+        "title": "Amend Commit",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.restack",
+        "title": "Restack Descendants",
+        "category": "StackHub",
+        "icon": "$(repo-sync)"
+      },
+      {
+        "command": "stackhub.syncMain",
+        "title": "Sync with Main",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.changeParent",
+        "title": "Change Parent",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.continue",
+        "title": "Continue Restack",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.abort",
+        "title": "Cancel Restack",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.conflicts",
+        "title": "Open Conflicted Files",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.sourceControl",
+        "title": "Open Source Control",
+        "category": "StackHub",
+        "icon": "$(source-control)"
+      },
+      {
+        "command": "stackhub.push",
+        "title": "Push Branch",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.pushStack",
+        "title": "Push Stack",
+        "category": "StackHub",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "stackhub.openPR",
+        "title": "Open Pull Request",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.toggleDraft",
+        "title": "Toggle Draft / Ready",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.syncMerged",
+        "title": "Sync and Clean Up Merged PRs",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.inspect",
+        "title": "Inspect Commits",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.diff",
+        "title": "View Changes Against Parent",
+        "category": "StackHub"
+      },
+      {
+        "command": "stackhub.submit",
+        "title": "Submit Stack",
+        "category": "StackHub"
+      }
+    ]
+  }
+}
